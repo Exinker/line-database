@@ -16,7 +16,7 @@ RE_ELEMENT = re.compile(r' {1,}'.join([
 
 WAVELENGTH_PATTERN = r'^[0-9]{1,}.[0-9]{1,}'
 KIND_PATTERN = '/[A, C, S, K, R, N, G]*'
-IONIZATION_PATTERN = 'O=[{values}]{{1,1}}'.format(
+IONIZATION_DEGREE_PATTERN = 'O=[{values}]{{1,1}}'.format(
     values=','.join(map(str, get_args(Ionization))),
 )
 INTENSITY_PATTERN = 'I=[0-9]{1,}'
@@ -25,7 +25,7 @@ INTENSITY_PATTERN = 'I=[0-9]{1,}'
 @dataclass
 class Filter:
     kind: str | Sequence[str] | None = field(default=None)
-    ionization_max: Ionization | None = field(default=1)
+    ionization_degree_max: Ionization | None = field(default=1)
     intensity_min: float | None = field(default=None)
 
     @property
@@ -35,8 +35,8 @@ class Filter:
         items.append(WAVELENGTH_PATTERN)
         if self.kind is not None:
             items.append(KIND_PATTERN)
-        if self.ionization_max is not None:
-            items.append(IONIZATION_PATTERN)
+        if self.ionization_degree_max is not None:
+            items.append(IONIZATION_DEGREE_PATTERN)
         if self.intensity_min is not None:
             items.append(INTENSITY_PATTERN)
 

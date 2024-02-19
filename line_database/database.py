@@ -5,7 +5,7 @@ from collections.abc import Sequence
 from typing import Mapping
 
 from line_database.filter import Filter, RE_ELEMENT
-from line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_PATTERN, INTENSITY_PATTERN
+from line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN, INTENSITY_PATTERN
 from line_database.sorter import Sorter
 from line_database.typing import NanoMeter, Symbol
 
@@ -82,10 +82,10 @@ class Database(dict):
                             if any(item not in kind for item in filter.kind):
                                 continue
 
-                    # filter / ionization_max
-                    if filter.ionization_max:
-                        ionization_max = int(re.search(IONIZATION_PATTERN, line)[0][2:])
-                        if ionization_max > filter.ionization_max:
+                    # filter / ionization_degree_max
+                    if filter.ionization_degree_max:
+                        ionization_degree_max = int(re.search(IONIZATION_DEGREE_PATTERN, line)[0][2:])
+                        if ionization_degree_max > filter.ionization_degree_max:
                             continue
 
                     # filter / intensity_min

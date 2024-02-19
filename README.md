@@ -29,7 +29,7 @@ from line_database import Database, Filter, Sorter
 database = Database(
     filter=Filter(
         kind='ACSKG',
-        ionization_max=1,
+        ionization_degree_max=1,
     ),
     sorter=Sorter.wavelength,
     order_max=2,
