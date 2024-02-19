@@ -16,12 +16,13 @@ DATABASE_VERSION = '4'
 
 class Database(dict):
 
-    def __init__(self, filter: Filter, sorter: Sorter, order_max: int = 1, version: str = DATABASE_VERSION, filedir: str = DATABASE_DIRECTORY):
+    def __init__(self, filter: Filter | None = None, sorter: Sorter | None = None, order_max: int = 1, version: str = DATABASE_VERSION, filedir: str = DATABASE_DIRECTORY):
+        self._filter = filter or Filter()
+        self._sorter = sorter or Sorter.none
+        self._order_max = order_max
         self._version = version
         self._filedir = filedir
-        self._filter = filter
-        self._sorter = sorter
-        self._order_max = order_max
+
         self._data = self._parse_data()
 
     @property
