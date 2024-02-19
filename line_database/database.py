@@ -10,7 +10,7 @@ from line_database.sorter import Sorter
 from line_database.typing import NanoMeter, Symbol
 
 
-DATABASE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'database')
+DATABASE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'data')
 DATABASE_VERSION = '4'
 
 
