@@ -4,7 +4,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Mapping
 
-from spectrumlab_line_database.filter import Filter, RE_ELEMENT
+from spectrumlab_line_database.filter import Filter, RE_ELEMENT_EN, RE_ELEMENT_RU
 from spectrumlab_line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN, INTENSITY_PATTERN
 from spectrumlab_line_database.sorter import Sorter
 
@@ -36,7 +36,7 @@ class Database(dict):
 
     @property
     def filepath(self) -> str:
-        return os.path.join(self.filedir, f'atom v{self.version}.mnd')
+        return os.path.join(self.filedir, f'theoretical v{self.version}.mnd')
 
     @property
     def filter(self) -> Filter:
@@ -62,11 +62,14 @@ class Database(dict):
 
         data = defaultdict(list)
         with open(self.filepath, encoding='utf-8') as file:
-            for line in file.readlines():
+            for i, line in enumerate(file.readlines()):
                 line = line.strip()
 
+                if i > 21:
+                    print(line)
+
                 # element
-                if re.match(RE_ELEMENT, line):
+                if re.match(RE_ELEMENT_EN, line) or re.match(RE_ELEMENT_RU, line):
                     symbol = line.split()[1]
 
                 if filter.elements:

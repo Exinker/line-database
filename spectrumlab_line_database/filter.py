@@ -9,10 +9,16 @@ from spectrumlab.typing import NanoMeter, Symbol
 Ionization = Literal[1, 2, 3]
 
 
-RE_ELEMENT = re.compile(r' {1,}'.join([
-    r'^[0-9]{1,3}',  # atomic_number
-    r'[A-Z][a-z]',  # symbol
-    r'[A-Я][а-я]*',  # name
+RE_ELEMENT_RU = re.compile(r' {1,}'.join([
+    r'[0-9]{1,3}',  # atomic_number
+    r'[A-Z]{1,1}[a-z]{0,2}',  # symbol
+    r'[A-Я]{1,1}[а-я]*',  # name
+    r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
+]))
+RE_ELEMENT_EN = re.compile(r' {1,}'.join([
+    r'[0-9]{1,3}',  # atomic_number
+    r'[A-Z]{1,1}[a-z]{0,2}',  # symbol
+    r'[A-Z]{1,1}[a-z]*',  # name
     r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
 ]))
 
