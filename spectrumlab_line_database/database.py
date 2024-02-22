@@ -4,10 +4,11 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Mapping
 
-from line_database.filter import Filter, RE_ELEMENT
-from line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN, INTENSITY_PATTERN
-from line_database.sorter import Sorter
-from line_database.typing import NanoMeter, Symbol
+from spectrumlab_line_database.filter import Filter, RE_ELEMENT
+from spectrumlab_line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN, INTENSITY_PATTERN
+from spectrumlab_line_database.sorter import Sorter
+
+from spectrumlab.typing import NanoMeter, Symbol
 
 
 DATABASE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'data')

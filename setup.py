@@ -1,31 +1,35 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-from line_database import DESCRIPTION, VERSION, NAME, AUTHOR_NAME, AUTHOR_EMAIL
+from spectrumlab_line_database import AUTHOR_EMAIL, AUTHOR_NAME, DESCRIPTION, NAME, VERSION
 
 
 setup(
-	# info
+    # info
     name=NAME,
-	description=DESCRIPTION,
-	license='MIT',
+    description=DESCRIPTION,
     keywords=['spectroscopy', 'spectra emulation', 'spectral line', 'database'],
-
-	# version
     version=VERSION,
 
-	# author details
+    # license
+    license='MIT',
+
+    # author details
     author=AUTHOR_NAME,
     author_email=AUTHOR_EMAIL,
 
-	# setup directories
+    # setup directories
     packages=find_packages(),
 
-	# setup data
-    package_data = {
+    # setup data
+    package_data={
         '': ['*.mnd'],
     },
 
-	# requires
+    # requires
+    install_requires=[
+        item.strip() for item in open('requirements.txt', 'r').readlines()
+        if item.strip()
+    ],
     python_requires='>=3.10',
 
 )

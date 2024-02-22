@@ -6,7 +6,7 @@ from .sorter import Sorter
 __version__ = '0.0.2'
 
 
-NAME = 'line database'
+NAME = 'spectrumlab line database'
 DESCRIPTION = 'Database of lines from `.mnd` file.'
 VERSION = __version__
 

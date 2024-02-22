@@ -17,13 +17,13 @@
 1. Зайди в папку с приложением: `cd PATH`, где `PATH` - путь до директории;
 2. Создать виртуальное окружение: `python -m venv env`;
 3. Активировать виртуальное окружение: `env\Scripts\activate.bat`;
-4. Установить зависимости в виртуальное окружение: `pip install git+https://github.com/Exinker/line-database`;
+4. Установить зависимости в виртуальное окружение: `pip install -r requirements.txt`;
 
 
 ## Usage
 Пример использования библиотеки:
 ```python
-from line_database import Database, Filter, Sorter
+from spectrumlab_line_database import Database, Filter, Sorter
 
 
 database = Database(

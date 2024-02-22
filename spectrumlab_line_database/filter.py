@@ -1,7 +1,8 @@
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Literal, get_args
+
+from spectrumlab.typing import Literal, get_args
 
 
 Ionization = Literal[1, 2, 3]
