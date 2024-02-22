@@ -2,26 +2,27 @@ import os
 import re
 from collections import defaultdict
 from collections.abc import Sequence
-from typing import Mapping
+from typing import Literal, Mapping
 
 from spectrumlab_line_database.filter import Filter, RE_ELEMENT_EN, RE_ELEMENT_RU
-from spectrumlab_line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN, INTENSITY_PATTERN
+from spectrumlab_line_database.filter import WAVELENGTH_PATTERN, KIND_PATTERN, IONIZATION_DEGREE_PATTERN
 from spectrumlab_line_database.sorter import Sorter
 
 from spectrumlab.typing import NanoMeter, Symbol
 
 
 DATABASE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'data')
+DATABASE_KIND = 'atom'
 DATABASE_VERSION = '4'
 
 
 class Database(dict):
 
-    def __init__(self, filter: Filter | None = None, sorter: Sorter | None = None, order_max: int = 1, version: str = DATABASE_VERSION, filedir: str = DATABASE_DIRECTORY):
+    def __init__(self, filter: Filter | None = None, sorter: Sorter | None = None, kind: str = DATABASE_KIND, version: str = DATABASE_VERSION, filedir: str = DATABASE_DIRECTORY):
         self._filter = filter or Filter()
         self._sorter = sorter or Sorter.none
-        self._order_max = order_max
         self._version = version
+        self._kind = kind
         self._filedir = filedir
 
         self._data = self._parse_data()
@@ -31,12 +32,16 @@ class Database(dict):
         return self._version
 
     @property
+    def kind(self) -> str:
+        return self._kind
+
+    @property
     def filedir(self) -> str:
         return self._filedir
 
     @property
     def filepath(self) -> str:
-        return os.path.join(self.filedir, f'theoretical v{self.version}.mnd')
+        return os.path.join(self.filedir, f'{self.kind} v{self.version}.mnd')
 
     @property
     def filter(self) -> Filter:
@@ -79,6 +84,11 @@ class Database(dict):
                 if element and re.match(re_line, line):
                     wavelength = float(re.search(WAVELENGTH_PATTERN, line)[0])
 
+                    if filter.wavelength_span:
+                        lb, ub = filter.wavelength_span
+                        if (wavelength < lb) or (wavelength > ub):
+                            continue
+
                     if filter.kind:
                         kind = re.search(KIND_PATTERN, line)[0][1:]
                         if isinstance(filter.kind, str):
@@ -93,20 +103,22 @@ class Database(dict):
                         if ionization_degree_max > filter.ionization_degree_max:
                             continue
 
-                    if filter.intensity_min:
-                        intensity = float(re.search(INTENSITY_PATTERN, line)[0][2:])
-                        if intensity < filter.intensity_min:
+                    if filter.intensity:
+                        intensity = None
+                        for pattern in filter.intensity.patterns:
+                            if re.search(pattern, line):
+                                intensity = float(re.search(pattern, line)[0][2:])
+                                break
+
+                        if intensity is None:
+                            continue
+                        if filter.intensity.intensity_min and (intensity < filter.intensity.intensity_min):
+                            continue
+                        if filter.intensity.intensity_max and (intensity > filter.intensity.intensity_max):
                             continue
 
-                    if filter.wavelength_span:
-                        lb, ub = filter.wavelength_span
-                        if (wavelength < lb) or (wavelength > ub):
-                            continue
-
-                    data[element].extend([
-                        wavelength*n
-                        for n in range(1, self._order_max + 1)
-                    ])
+                    data[element].append(wavelength)
+                
 
         return data
 
@@ -129,7 +141,7 @@ class Database(dict):
     def __repr__(self) -> str:
         cls = self.__class__
 
-        return f'{cls}(v{self.version})'
+        return f'{cls}({self.kind} v{self.version})'
 
     def __str__(self) -> str:
         return '\n'.join([

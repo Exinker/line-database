@@ -2,7 +2,7 @@ __version__ = '0.0.4'
 
 
 from .database import Database
-from .filter import Filter, FilterElements
+from .filter import Filter, FilterElements, FilterIntensity
 from .sorter import Sorter
 
 

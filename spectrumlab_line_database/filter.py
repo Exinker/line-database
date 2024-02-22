@@ -9,13 +9,14 @@ from spectrumlab.typing import NanoMeter, Symbol
 Ionization = Literal[1, 2, 3]
 
 
-RE_ELEMENT_RU = re.compile(r' {1,}'.join([
+SPACE_PATTERN = r' {1,}'
+RE_ELEMENT_RU = re.compile(fr'{SPACE_PATTERN}'.join([
     r'[0-9]{1,3}',  # atomic_number
     r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Я]{1,1}[а-я]*',  # name
     r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
 ]))
-RE_ELEMENT_EN = re.compile(r' {1,}'.join([
+RE_ELEMENT_EN = re.compile(fr'{SPACE_PATTERN}'.join([
     r'[0-9]{1,3}',  # atomic_number
     r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Z]{1,1}[a-z]*',  # name
@@ -27,7 +28,6 @@ KIND_PATTERN = '/[A, C, S, K, R, N, G]*'
 IONIZATION_DEGREE_PATTERN = 'O=[{values}]{{1,1}}'.format(
     values=','.join(map(str, get_args(Ionization))),
 )
-INTENSITY_PATTERN = 'I=[0-9]{1,}'
 
 
 @dataclass
@@ -41,10 +41,30 @@ class FilterElements:
 
 
 @dataclass
+class FilterIntensity:
+    key: str = field(default='I')
+    intensity_min: float | None = field(default=None)
+    intensity_max: float | None = field(default=None)
+
+    @property
+    def patterns(self) -> Sequence[str]:
+        return (
+            fr'{self.key}=[0-9]{{1,}}{SPACE_PATTERN}',
+            fr'{self.key}=[0-9]{{1,}}.[0-9]{{1,}}{SPACE_PATTERN}',
+            fr'{self.key}=[0-9]{{1,}}e[+-][0-9]{{1,3}}{SPACE_PATTERN}',
+            fr'{self.key}=[0-9]{{1,}}.[0-9]{{1,16}}e[+-][0-9]{{1,3}}{SPACE_PATTERN}',
+        )
+
+    # --------        private        --------
+    def __contains__(self, element: Symbol) -> bool:
+        return element in self.elements
+
+
+@dataclass
 class Filter:
     kind: str | Sequence[str] | None = field(default=None)
     ionization_degree_max: Ionization | None = field(default=1)
-    intensity_min: float | None = field(default=None)
+    intensity: FilterIntensity | None = field(default=None)
     wavelength_span: tuple[NanoMeter, NanoMeter] | None = field(default=None)
     elements: FilterElements | None = field(default=None)
 
@@ -57,7 +77,5 @@ class Filter:
             items.append(KIND_PATTERN)
         if self.ionization_degree_max is not None:
             items.append(IONIZATION_DEGREE_PATTERN)
-        if self.intensity_min is not None:
-            items.append(INTENSITY_PATTERN)
 
-        return re.compile(r' {1,}'.join(items))
+        return re.compile(fr'{SPACE_PATTERN}'.join(items))
