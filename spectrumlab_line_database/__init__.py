@@ -3,7 +3,7 @@ from .filter import Filter
 from .sorter import Sorter
 
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 
 NAME = 'spectrumlab line database'
