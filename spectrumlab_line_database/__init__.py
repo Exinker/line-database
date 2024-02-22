@@ -1,9 +1,9 @@
-from .database import Database
-from .filter import Filter
-from .sorter import Sorter
-
-
 __version__ = '0.0.3'
+
+
+from .database import Database
+from .filter import Filter, FilterElements
+from .sorter import Sorter
 
 
 NAME = 'spectrumlab line database'

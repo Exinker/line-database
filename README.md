@@ -23,25 +23,24 @@
 ## Usage
 Пример использования библиотеки:
 ```python
-from spectrumlab_line_database import Database, Filter, Sorter
+from spectrumlab_line_database import Database, Filter, FilterElements, Sorter
 
-
-database = Database(
-    filter=Filter(
-        kind='ACSKG',
-        ionization_degree_max=1,
-    ),
-    sorter=Sorter.wavelength,
-    order_max=2,
-)
 
 if __name__ == '__main__':
-    element = 'Cu'
+    elements = ['Cu']
 
-    content = '{element}: {items}.'.format(
-        element=element,
-        items=', '.join([f'{item:.4f}' for item in database['Cu']]),
+    database = Database(
+        filter=Filter(
+            kind='A',
+            ionization_degree_max=2,
+            intensity_min=2500,
+            wavelength_span=[120, 900],
+            elements=FilterElements(elements, kind='only'),
+        ),
+        sorter=Sorter.wavelength,
+        order_max=2,
     )
-    print(content)  # Cu: 324.7532, 327.3954, 649.5064, 654.7908.
+
+    print(database)  # Cu: (261.8365; 523.673; 296.1165; 592.233; 324.7532; 649.5064; 327.3954; 654.7908)
 
 ```

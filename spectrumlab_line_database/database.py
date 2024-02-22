@@ -54,26 +54,31 @@ class Database(dict):
         return self.data.keys()
 
     # --------            private            --------
-    def _parse_data(self):
+    def _parse_data(self) -> Mapping[Symbol, Sequence[NanoMeter]]:
         filter = self.filter
         re_line = self.filter.pattern
 
         symbol = None
 
-        db = defaultdict(list)
+        data = defaultdict(list)
         with open(self.filepath, encoding='utf-8') as file:
-            for i, line in enumerate(file.readlines()):
+            for line in file.readlines():
                 line = line.strip()
 
+                # element
                 if re.match(RE_ELEMENT, line):
                     symbol = line.split()[1]
 
-                if symbol and re.match(re_line, line):
+                if filter.elements:
+                    if (filter.elements.kind == 'only') and (symbol not in filter.elements):
+                        continue
+                    if (filter.elements.kind == 'only not') and (symbol in filter.elements):
+                        continue
 
-                    # wavelength
+                # wavelength
+                if symbol and re.match(re_line, line):
                     wavelength = float(re.search(WAVELENGTH_PATTERN, line)[0])
 
-                    # filter / kind
                     if filter.kind:
                         kind = re.search(KIND_PATTERN, line)[0][1:]
                         if isinstance(filter.kind, str):
@@ -83,25 +88,27 @@ class Database(dict):
                             if any(item not in kind for item in filter.kind):
                                 continue
 
-                    # filter / ionization_degree_max
                     if filter.ionization_degree_max:
                         ionization_degree_max = int(re.search(IONIZATION_DEGREE_PATTERN, line)[0][2:])
                         if ionization_degree_max > filter.ionization_degree_max:
                             continue
 
-                    # filter / intensity_min
                     if filter.intensity_min:
                         intensity = float(re.search(INTENSITY_PATTERN, line)[0][2:])
                         if intensity < filter.intensity_min:
                             continue
 
-                    #
-                    db[symbol].extend([
+                    if filter.wavelength_span:
+                        lb, ub = filter.wavelength_span
+                        if (wavelength < lb) or (wavelength > ub):
+                            continue
+
+                    data[symbol].extend([
                         wavelength*n
                         for n in range(1, self._order_max + 1)
                     ])
 
-        return db
+        return data
 
     def __getitem__(self, key: Symbol) -> Sequence[NanoMeter]:
         sorter = self.sorter

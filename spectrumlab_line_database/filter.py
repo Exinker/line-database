@@ -1,8 +1,9 @@
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from typing import Literal, get_args
 
-from spectrumlab.typing import Literal, get_args
+from spectrumlab.typing import NanoMeter, Symbol
 
 
 Ionization = Literal[1, 2, 3]
@@ -24,10 +25,22 @@ INTENSITY_PATTERN = 'I=[0-9]{1,}'
 
 
 @dataclass
+class FilterElements:
+    elements: Sequence[Symbol]
+    kind: Literal['only', 'only not'] = field(default='only')
+
+    # --------        private        --------
+    def __contains__(self, symbol: Symbol) -> bool:
+        return symbol in self.elements
+
+
+@dataclass
 class Filter:
     kind: str | Sequence[str] | None = field(default=None)
     ionization_degree_max: Ionization | None = field(default=1)
     intensity_min: float | None = field(default=None)
+    wavelength_span: tuple[NanoMeter, NanoMeter] | None = field(default=None)
+    elements: FilterElements | None = field(default=None)
 
     @property
     def pattern(self) -> str:
