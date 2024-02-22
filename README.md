@@ -32,15 +32,17 @@ if __name__ == '__main__':
     database = Database(
         filter=Filter(
             kind='A',
-            ionization_degree_max=2,
-            intensity_min=2500,
+            ionization_degree_max=1,
+            intensity=FilterIntensity(
+                key='I',
+                intensity_min=2500,
+            ),
             wavelength_span=[120, 900],
             elements=FilterElements(elements, kind='only'),
         ),
         sorter=Sorter.wavelength,
-        order_max=2,
     )
 
-    print(database)  # Cu: (261.8365; 523.673; 296.1165; 592.233; 324.7532; 649.5064; 327.3954; 654.7908)
+    print(database)  # Cu: (261.8365; 296.1165; 324.7532; 327.3954)
 
 ```
