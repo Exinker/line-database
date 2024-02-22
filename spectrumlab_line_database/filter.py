@@ -11,13 +11,13 @@ Ionization = Literal[1, 2, 3]
 
 RE_ELEMENT_RU = re.compile(r' {1,}'.join([
     r'[0-9]{1,3}',  # atomic_number
-    r'[A-Z]{1,1}[a-z]{0,2}',  # symbol
+    r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Я]{1,1}[а-я]*',  # name
     r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
 ]))
 RE_ELEMENT_EN = re.compile(r' {1,}'.join([
     r'[0-9]{1,3}',  # atomic_number
-    r'[A-Z]{1,1}[a-z]{0,2}',  # symbol
+    r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Z]{1,1}[a-z]*',  # name
     r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
 ]))
@@ -36,8 +36,8 @@ class FilterElements:
     kind: Literal['only', 'only not'] = field(default='only')
 
     # --------        private        --------
-    def __contains__(self, symbol: Symbol) -> bool:
-        return symbol in self.elements
+    def __contains__(self, element: Symbol) -> bool:
+        return element in self.elements
 
 
 @dataclass

@@ -58,28 +58,25 @@ class Database(dict):
         filter = self.filter
         re_line = self.filter.pattern
 
-        symbol = None
+        element = None
 
         data = defaultdict(list)
         with open(self.filepath, encoding='utf-8') as file:
-            for i, line in enumerate(file.readlines()):
+            for line in file.readlines():
                 line = line.strip()
-
-                if i > 21:
-                    print(line)
 
                 # element
                 if re.match(RE_ELEMENT_EN, line) or re.match(RE_ELEMENT_RU, line):
-                    symbol = line.split()[1]
+                    element = line.split()[1]
 
                 if filter.elements:
-                    if (filter.elements.kind == 'only') and (symbol not in filter.elements):
+                    if (filter.elements.kind == 'only') and (element not in filter.elements):
                         continue
-                    if (filter.elements.kind == 'only not') and (symbol in filter.elements):
+                    if (filter.elements.kind == 'only not') and (element in filter.elements):
                         continue
 
                 # wavelength
-                if symbol and re.match(re_line, line):
+                if element and re.match(re_line, line):
                     wavelength = float(re.search(WAVELENGTH_PATTERN, line)[0])
 
                     if filter.kind:
@@ -106,7 +103,7 @@ class Database(dict):
                         if (wavelength < lb) or (wavelength > ub):
                             continue
 
-                    data[symbol].extend([
+                    data[element].extend([
                         wavelength*n
                         for n in range(1, self._order_max + 1)
                     ])
@@ -126,7 +123,7 @@ class Database(dict):
     def __len__(self) -> int:
         return sum(
             len(wavelength)
-            for symbol, wavelength in self.data.items()
+            for element, wavelength in self.data.items()
         )
 
     def __repr__(self) -> str:
@@ -136,9 +133,9 @@ class Database(dict):
 
     def __str__(self) -> str:
         return '\n'.join([
-            '{symbol}: ({wavelength})'.format(
-                symbol=symbol,
-                wavelength='; '.join(map(str, wavelength))
+            '{element}: ({wavelength})'.format(
+                element=element,
+                wavelength='; '.join(map(str, self[element])),
             )
-            for symbol, wavelength in self.data.items()
+            for element in self.keys()
         ])
