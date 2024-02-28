@@ -24,7 +24,7 @@ RE_ELEMENT_EN = re.compile(fr'{SPACE_PATTERN}'.join([
 ]))
 
 WAVELENGTH_PATTERN = r'^[0-9]{1,}.[0-9]{1,}'
-KIND_PATTERN = '/[A, C, S, K, R, N, G]*'
+KIND_PATTERN = '/[ACSKRNG]*'
 IONIZATION_DEGREE_PATTERN = 'O=[{values}]{{1,1}}'.format(
     values=','.join(map(str, get_args(Ionization))),
 )
