@@ -11,19 +11,19 @@ Ionization = Literal[1, 2, 3]
 
 SPACE_PATTERN = r' {1,}'
 RE_ELEMENT_RU = re.compile(fr'{SPACE_PATTERN}'.join([
-    r'[0-9]{1,3}',  # atomic_number
+    r'\d{1,3}',  # atomic_number
     r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Я]{1,1}[а-я]*',  # name
-    r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
+    r'\d{1,}.\d{1,}',  # atomic_weight
 ]))
 RE_ELEMENT_EN = re.compile(fr'{SPACE_PATTERN}'.join([
-    r'[0-9]{1,3}',  # atomic_number
+    r'\d{1,3}',  # atomic_number
     r'[A-Z]{1,1}[a-z]{0,2}',  # element
     r'[A-Z]{1,1}[a-z]*',  # name
-    r'[0-9]{1,}.[0-9]{1,}',  # atomic_weight
+    r'\d{1,}.\d{1,}',  # atomic_weight
 ]))
 
-WAVELENGTH_PATTERN = r'^[0-9]{1,}.[0-9]{1,}'
+WAVELENGTH_PATTERN = r'^\d{1,}.\d{1,}'
 KIND_PATTERN = '/[ACSKRNG]*'
 IONIZATION_DEGREE_PATTERN = 'O=[{values}]{{1,1}}'.format(
     values=','.join(map(str, get_args(Ionization))),
@@ -49,10 +49,10 @@ class FilterIntensity:
     @property
     def patterns(self) -> Sequence[str]:
         return (
-            fr'{self.key}=[0-9]{{1,}}{SPACE_PATTERN}',
-            fr'{self.key}=[0-9]{{1,}}.[0-9]{{1,}}{SPACE_PATTERN}',
-            fr'{self.key}=[0-9]{{1,}}e[+-][0-9]{{1,3}}{SPACE_PATTERN}',
-            fr'{self.key}=[0-9]{{1,}}.[0-9]{{1,16}}e[+-][0-9]{{1,3}}{SPACE_PATTERN}',
+            fr'{self.key}=\d{{1,}}{SPACE_PATTERN}',
+            fr'{self.key}=\d{{1,}}.\d{{1,}}{SPACE_PATTERN}',
+            fr'{self.key}=\d{{1,}}e[+-]\d{{1,3}}{SPACE_PATTERN}',
+            fr'{self.key}=\d{{1,}}.\d{{1,16}}e[+-]\d{{1,3}}{SPACE_PATTERN}',
         )
 
     # --------        private        --------
